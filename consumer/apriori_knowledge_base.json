@@ -1,0 +1,76 @@
+[
+    {
+        "antecedent": [
+            "Beer"
+        ],
+        "consequent": [
+            "Diapers"
+        ],
+        "confidence": 1.0,
+        "support": 0.2333
+    },
+    {
+        "antecedent": [
+            "Diapers"
+        ],
+        "consequent": [
+            "Beer"
+        ],
+        "confidence": 1.0,
+        "support": 0.2333
+    },
+    {
+        "antecedent": [
+            "Butter"
+        ],
+        "consequent": [
+            "Bread"
+        ],
+        "confidence": 1.0,
+        "support": 0.3667
+    },
+    {
+        "antecedent": [
+            "Bread",
+            "Milk"
+        ],
+        "consequent": [
+            "Butter"
+        ],
+        "confidence": 0.75,
+        "support": 0.2
+    },
+    {
+        "antecedent": [
+            "Butter",
+            "Milk"
+        ],
+        "consequent": [
+            "Bread"
+        ],
+        "confidence": 1.0,
+        "support": 0.2
+    },
+    {
+        "antecedent": [
+            "Milk",
+            "Bread"
+        ],
+        "consequent": [
+            "Butter"
+        ],
+        "confidence": 0.75,
+        "support": 0.2
+    },
+    {
+        "antecedent": [
+            "Milk",
+            "Butter"
+        ],
+        "consequent": [
+            "Bread"
+        ],
+        "confidence": 1.0,
+        "support": 0.2
+    }
+]
