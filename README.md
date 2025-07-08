@@ -1,3 +1,3 @@
-# Walmart-Sparkathon-2025
+# StockPilot
 
 
