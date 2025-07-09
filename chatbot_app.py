@@ -333,6 +333,57 @@ def setup_chatbot_agent():
 
     return agent_executor
 
+from kafka import KafkaConsumer, KafkaProducer
+
+KAFKA_INPUT_TOPIC = 'chatbot-input'
+KAFKA_OUTPUT_TOPIC = 'chatbot-output'
+
+def start_chatbot_kafka_loop(agent_chain):
+    consumer = KafkaConsumer(
+        KAFKA_INPUT_TOPIC,
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        auto_offset_reset='latest',
+        enable_auto_commit=True,
+        group_id='chatbot-input-group',
+        value_deserializer=lambda x: x.decode('utf-8')
+    )
+
+    producer = KafkaProducer(
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        value_serializer=lambda x: json.dumps(x).encode('utf-8')
+    )
+
+    print(f"✅ Chatbot is now listening on Kafka topic '{KAFKA_INPUT_TOPIC}'")
+
+    chat_history = deque(maxlen=10)
+
+    for msg in consumer:
+        try:
+            user_input = msg.value
+            print(f"📩 Received query from Kafka: {user_input}")
+
+            # Call the LangChain agent
+            response = agent_chain.invoke({
+                "input": user_input,
+                "chat_history": list(chat_history)
+            })
+
+            final_output = response["output"]
+            print(f"🤖 Chatbot: {final_output}")
+
+            # Send to chatbot-output topic
+            producer.send(KAFKA_OUTPUT_TOPIC, {
+                "query": user_input,
+                "response": final_output
+            })
+            producer.flush()
+
+            chat_history.append(("human", user_input))
+            chat_history.append(("ai", final_output))
+
+        except Exception as e:
+            print(f"❌ Error processing message: {e}")
+
 
 if __name__ == '__main__':
     # Load environment variables from .env file (if it exists)
@@ -355,28 +406,6 @@ if __name__ == '__main__':
     chat_history = deque(maxlen=10)  # stores last 10 exchanges
 
     # Start the interactive chat loop
-    while True:
-        try:
-            user_input = input("\nYour query: ")
-            if user_input.lower() == 'exit':
-                break
-            
-            # Invoke the LangChain agent with the user's query
-            response = agent_chain.invoke({"input": user_input,
-                                           "chat_history": list(chat_history)
-                                        })
-
-            # Print the LLM's final answer
-            print(f"Chatbot: {response['output']}")
-            chat_history.append(("human", user_input))
-            chat_history.append(("ai", response['output']))
-            
-        except KeyboardInterrupt:
-            print("\nChatbot shutting down.")
-            break
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            print("Please check your API key, Kafka connection, and knowledge base file path.")
-            continue
+    start_chatbot_kafka_loop(agent_chain)
 
     print("Chatbot application ended.")
