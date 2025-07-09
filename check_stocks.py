@@ -19,8 +19,8 @@ try:
     conn = mysql.connector.connect(
         host='localhost',       # or your DB host
         user='root',   # replace with your MySQL username
-        password='password', # replace with your MySQL password
-        database='anurag'       # name of your MySQL database
+        password='rootpassword', # replace with your MySQL password
+        database='mydb'       # name of your MySQL database
     )
     cursor = conn.cursor()
 except Exception as e:
