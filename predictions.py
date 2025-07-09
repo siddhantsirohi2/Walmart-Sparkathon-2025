@@ -52,4 +52,4 @@ for idx, row in data_for_model.iterrows():
     })
 
     # Wait 5 minutes
-    time.sleep(30)
+    time.sleep(2)

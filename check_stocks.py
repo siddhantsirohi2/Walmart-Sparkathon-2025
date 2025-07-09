@@ -19,8 +19,8 @@ try:
     conn = mysql.connector.connect(
         host='localhost',       # or your DB host
         user='root',   # replace with your MySQL username
-        password='abhyuday', # replace with your MySQL password
-        database='stores'       # name of your MySQL database
+        password='password', # replace with your MySQL password
+        database='anurag'       # name of your MySQL database
     )
     cursor = conn.cursor()
 except Exception as e:
@@ -36,6 +36,7 @@ for message in consumer:
         product_id = data['product_id']
         prediction = data['prediction']
 
+        print(data)
         # Query actual stock
         cursor.execute(
             "SELECT stock FROM stocks WHERE store_id = %s AND product_id = %s",
